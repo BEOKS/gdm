@@ -1,0 +1,84 @@
+# GitLab CI pipeline: build on master and publish a Release with JAR asset
+
+stages:
+  - build
+  - release
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  JAR_PATH: "app/build/libs/gabia-dev-mcp-server-1.0.0.jar"
+
+cache:
+  key: "${CI_PROJECT_PATH}-gradle-cache"
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+build:
+  stage: build
+  image: gradle:8.8.0-jdk17
+  rules:
+    - if: "$CI_COMMIT_BRANCH == 'master'"
+  script:
+    - ./gradlew --version
+    - ./gradlew clean build
+    - test -f "$JAR_PATH" || (echo "Missing jar: $JAR_PATH" && exit 1)
+  artifacts:
+    name: "gabia-dev-mcp-server-${CI_COMMIT_SHORT_SHA}"
+    expire_in: 1 week
+    when: on_success
+    paths:
+      - "$JAR_PATH"
+
+release:
+  stage: release
+  image: alpine:3.19
+  rules:
+    - if: "$CI_COMMIT_BRANCH == 'master'"
+  needs:
+    - job: build
+      artifacts: true
+  variables:
+    TAG_NAME: "release-${CI_COMMIT_SHORT_SHA}"
+  script:
+    - apk add --no-cache curl jq
+    - test -f "$JAR_PATH" || (echo "Missing jar: $JAR_PATH (ensure build artifacts are available)" && exit 1)
+    # 1) Upload the JAR to project uploads to obtain a permanent asset URL
+    - |
+      upload_json=$(curl --fail --silent --show-error \
+        --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+        --form "file=@${JAR_PATH}" \
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/uploads")
+      echo "Upload response: ${upload_json}"
+      asset_rel_url=$(echo "${upload_json}" | jq -r '.url')
+      if [ -z "${asset_rel_url}" ] || [ "${asset_rel_url}" = "null" ]; then
+        echo "Failed to get asset url from upload response" && exit 1
+      fi
+      asset_url="${CI_PROJECT_URL}${asset_rel_url}"
+      echo "Asset URL: ${asset_url}"
+    # 2) Create a Release (tag is created automatically from ref)
+    - |
+      release_body=$(cat <<JSON
+      {
+        "name": "Release ${TAG_NAME}",
+        "tag_name": "${TAG_NAME}",
+        "ref": "${CI_COMMIT_SHA}",
+        "description": "Automated release for ${CI_COMMIT_SHORT_SHA}",
+        "assets": {
+          "links": [
+            {
+              "name": "gabia-dev-mcp-server-1.0.0.jar",
+              "url": "${asset_url}"
+            }
+          ]
+        }
+      }
+      JSON
+      )
+      echo "Creating release with tag ${TAG_NAME}"
+      curl --fail --silent --show-error \
+        --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+        --header "Content-Type: application/json" \
+        --data "${release_body}" \
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
+
