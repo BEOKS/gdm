@@ -32,7 +32,7 @@ build:
 
 release:
   stage: release
-  image: alpine:3.19
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
   rules:
     - if: "$CI_COMMIT_BRANCH == 'master'"
   needs:
@@ -41,6 +41,14 @@ release:
   variables:
     TAG_NAME: "release-${CI_COMMIT_SHORT_SHA}"
   script: |
-    apk add --no-cache curl jq
-    test -f "$JAR_PATH" || (echo "Missing jar: $JAR_PATH (ensure build artifacts are available)" && exit 1)
-    sh ci/release.sh
+    # Construct a link to the build job's artifact JAR
+    ASSET_URL="${CI_PROJECT_URL}/-/jobs/artifacts/${CI_COMMIT_BRANCH}/raw/${JAR_PATH}?job=build"
+    echo "Asset URL: ${ASSET_URL}"
+
+    # Create the release with release-cli (requires GITLAB_TOKEN with api scope)
+    release-cli create \
+      --name "Release ${TAG_NAME}" \
+      --tag-name "${TAG_NAME}" \
+      --ref "${CI_COMMIT_SHA}" \
+      --description "Automated release for ${CI_COMMIT_SHORT_SHA}" \
+      --assets-link '{"name":"gabia-dev-mcp-server-1.0.0.jar","url":"'"${ASSET_URL}"'"}'
