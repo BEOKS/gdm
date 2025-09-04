@@ -2,6 +2,8 @@
 
 **LLM이 가비아 개발자의 업무 플랫폼을 직접 활용하여 자동화의 다음 단계로 도약하는 프로젝트**
 
+[Demo](https://gitlab.gabia.com/gm2302028/gabia-dev-mcp/-/issues/1)
+
 ## 프로젝트 개요
 
 개발자의 일상적인 업무를 생각해보면, 서비스 페이지부터 GitLab, Figma, Confluence, Mattermost, Sentry, Kibana, Rancher, Jira, IDE까지 정말 많은 플랫폼을 오가며 작업합니다.
