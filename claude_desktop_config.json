@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "gabia-dev-mcp": {
+      "command": "java",
+      "args": [
+        "-jar",
+        "/Users/leejs/Project/gabia-dev-mcp/app/build/libs/gabia-dev-mcp-server-1.0.0.jar"
+      ],
+      "env": {
+        "GITLAB_API_URL": "https://gitlab.gabia.com/api/v4",
+        "GITLAB_TOKEN": "your-gitlab-token-here"
+      }
+    }
+  }
+}

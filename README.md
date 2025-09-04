@@ -1,0 +1,146 @@
+# Gabia Dev MCP
+
+**LLM이 가비아 개발자의 업무 플랫폼을 직접 활용하여 자동화의 다음 단계로 도약하는 프로젝트**
+
+## 프로젝트 개요
+
+개발자의 일상적인 업무를 생각해보면, 서비스 페이지부터 GitLab, Figma, Confluence, Mattermost, Sentry, Kibana, Rancher, Jira, IDE까지 정말 많은 플랫폼을 오가며 작업합니다.
+
+```mermaid
+graph TD
+    A[기획 확인] --> B[코드 작성]
+    B --> C[코드 리뷰]
+    C --> D[배포]
+    D --> E[모니터링]
+    E --> F[문서화]
+    
+    subgraph "플랫폼별 작업"
+        A1[Confluence<br/>기획 문서 확인]
+        A2[Figma<br/>디자인 확인]
+        B1[IDE<br/>코드 작성]
+        C1[GitLab<br/>MR 생성 및 리뷰]
+        D1[Rancher<br/>배포 관리]
+        E1[Sentry<br/>에러 모니터링]
+        E2[Kibana<br/>로그 분석]
+        E3[서비스 페이지<br/>동작 확인]
+        F1[Confluence<br/>변경사항 기록]
+        F2[MR 본문<br/>코드 요약 작성]
+    end
+    
+    A --> A1
+    A --> A2
+    B --> B1
+    C --> C1
+    D --> D1
+    E --> E1
+    E --> E2
+    E --> E3
+    F --> F1
+    F --> F2
+```
+
+
+예를 들어, Confluence나 Figma에서 기획 내용을 확인하고,IDE에서 코드를 작성한 다음, GitLab을 통해 코드 리뷰를 받아 배포합니다. 배포 후에는 Rancher와 페이지에 접속해서 정상 동작을 확인하고, Sentry를 통해 에러가 있는지 모니터링합니다. 
+
+이런 과정에서 반복적으로 수행해야 하는 작업들이 정말 많았습니다. 우리는 코드 포맷팅, CI 파이프라인, MR 템플릿 등을 통해 최대한 자동화를 적용해왔지만, 여전히 해결하지 못한 부분들이 있었습니다.  MR 본문에 코드의 핵심을 요약해서 작성하거나, Confluence에 변경사항 기록하기와 같은 작업은 규칙 기반으로는 한계가 있었습니다.
+
+
+## 해결 방안
+
+최근 LLM 챗봇이 상용화되면서 업무에 활용하는 사례가 늘어났습니다. 그런데 이런 반복 작업을 할 때마다 우리는 비슷한 패턴을 반복합니다. 코드나 정보를 챗봇에 복사해서 붙여넣고, 원하는 결과를 만들어달라고 요청한 다음, 나온 결과를 다시 복사해서 실제 플랫폼에 붙여넣는 식이죠.  이 과정이 생각보다 많은 시간을 잡아먹습니다. 특히 같은 종류의 작업을 반복할 때마다 이런 복사-붙여넣기 과정을 거쳐야 한다는 게 정말 번거롭고 비효율적이었습니다.
+
+만약 우리가 정보를 복사-붙여넣기하는 대신 LLM 이 직접 정보를 확인-기록하도록 하면 어떻게 될까요? LLM이 필요한 정보를 판단하고 직접 수집해 결과물의 질이 올라 갑니다. 또한 위와 같은 번거로운 과정을 제거해 업무 생산성을 극대화할 수 있습니다.
+
+이 프로젝트에서는 MCP, 특히 Function Call (Tools) 기능을 활용해 LLM 이 플랫폼의 정보를 확인-기록할 수 있도록하는 기능을 구현합니다.
+
+## 기술 스택
+
+### MCP (Model Context Protocol)
+- **Function Call (Tools)** 기능을 활용한 플랫폼 연동
+- **이식성**: Claude Desktop, Cursor 등 다양한 에이전트에서 활용 가능
+- **표준화된 프로토콜**: JSON-RPC 2.0 기반 통신
+
+### 지원 플랫폼 및 도구
+
+| 플랫폼 | 도구명 | 기능 | 설명 |
+|--------|--------|------|------|
+| **GitLab** | `get_merge_request` | MR 기본 정보 조회 | MR의 제목, 설명, 상태, 작성자 등 기본 정보를 조회합니다 |
+| **GitLab** | `get_merge_request_diffs` | MR 코드 변경사항 조회 | MR의 코드 변경사항(diff)을 조회합니다 |
+| **GitLab** | `mr_discussions` | MR 토론 및 리뷰 조회 | MR의 코드 리뷰, 토론, 댓글을 조회합니다 |
+| **GitLab** | `create_merge_request` | MR 생성 | 새로운 병합 요청을 생성합니다 |
+| **GitLab** | `list_merge_requests` | MR 목록 조회 | 다양한 필터 옵션과 함께 MR 목록을 조회합니다 |
+| **GitLab** | `create_issue` | 이슈 생성 | GitLab 프로젝트에 새로운 이슈를 생성합니다 |
+| **GitLab** | `list_issues` | 이슈 목록 조회 | 프로젝트 또는 모든 접근 가능한 프로젝트의 이슈 목록을 조회합니다 |
+| **GitLab** | `get_issue` | 이슈 상세 조회 | GitLab 프로젝트의 특정 이슈 상세 정보를 조회합니다 |
+| **GitLab** | `update_issue` | 이슈 수정 | GitLab 프로젝트의 이슈를 수정합니다 |
+| **GitLab** | `delete_issue` | 이슈 삭제 | GitLab 프로젝트에서 이슈를 삭제합니다 |
+| **GitLab** | `my_issues` | 내 이슈 조회 | 인증된 사용자에게 할당된 이슈 목록을 조회합니다 (기본값: 열린 이슈) |
+| **GitLab** | `list_issue_discussions` | 이슈 토론 조회 | GitLab 프로젝트의 이슈에 대한 토론 목록을 조회합니다 |
+| **GitLab** | `create_issue_note` | 이슈 노트 생성 | 기존 이슈 스레드에 새로운 노트를 추가합니다 |
+| **GitLab** | `update_issue_note` | 이슈 노트 수정 | 기존 이슈 스레드 노트를 수정합니다 |
+| **GitLab** | `list_issue_links` | 이슈 링크 목록 조회 | 특정 이슈의 모든 이슈 링크를 조회합니다 |
+| **GitLab** | `get_issue_link` | 이슈 링크 조회 | 특정 이슈 링크를 조회합니다 |
+| **GitLab** | `create_issue_link` | 이슈 링크 생성 | 두 이슈 간의 이슈 링크를 생성합니다 |
+| **GitLab** | `delete_issue_link` | 이슈 링크 삭제 | 이슈 링크를 삭제합니다 |
+| **Confluence** | `confluence_search` | 문서 검색 | 단순 텍스트 또는 CQL로 Confluence를 검색하고, 간단한 JSON 결과를 반환합니다 |
+| **Confluence** | `confluence_get_page` | 페이지 상세 조회 | page_id 또는 (title + space_key)로 페이지 상세를 조회하고, HTML/Markdown 본문과 메타데이터를 반환합니다 |
+| **Confluence** | `confluence_create_page` | 페이지 생성 | 스페이스/제목/본문으로 새 페이지를 생성합니다 (markdown/wiki/storage 지원) |
+| **Confluence** | `confluence_update_page` | 페이지 수정 | 페이지 ID로 제목/본문/부모/버전을 업데이트합니다 |
+| **Confluence** | `confluence_delete_page` | 페이지 삭제 | 페이지 ID로 페이지를 삭제합니다 |
+| **Confluence** | `confluence_add_comment` | 댓글 추가 | 페이지 ID에 댓글을 추가합니다 |
+| **Figma** | `get_figma_data` | Figma 파일 데이터 조회 | 레이아웃, 콘텐츠, 시각적 요소, 컴포넌트 정보를 포함한 포괄적인 Figma 파일 데이터를 조회합니다 |
+| **Figma** | `download_figma_images` | Figma 이미지 다운로드 | 이미지 또는 아이콘 노드의 ID를 기반으로 Figma 파일에서 사용된 SVG 및 PNG 이미지를 다운로드합니다 |
+| **Mattermost** | - | 알림 및 커뮤니케이션 | - |
+| **Sentry** | - | 에러 모니터링 및 분석 | - |
+| **Kibana** | - | 로그 분석 | - |
+| **Rancher** | - | 컨테이너 관리 | - |
+| **Jira** | - | 이슈 트래킹 | - |
+
+
+## 아키텍처
+
+```mermaid
+graph TB
+    subgraph "LLM 에이전트"
+        A[Claude Desktop]
+        B[Cursor]
+        C[기타 LLM 에이전트]
+    end
+    
+    subgraph "Gabia Dev MCP"
+        D[MCP Client]
+        E[MCP Server]
+        F[Platform Connectors]
+    end
+    
+    subgraph "가비아 개발 플랫폼"
+        G[GitLab]
+        H[Confluence]
+        I[Sentry]
+        J[Kibana]
+        K[Rancher]
+        L[Jira]
+        M[Figma]
+        N[Mattermost]
+    end
+    
+    A --> D
+    B --> D
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    F --> H
+    F --> I
+    F --> J
+    F --> K
+    F --> L
+    F --> M
+    F --> N
+```
+
+## 참고 자료
+
+- [Model Context Protocol 공식 문서](https://modelcontextprotocol.io/docs/getting-started/intro)
+- [MCP 아키텍처 개요](https://modelcontextprotocol.io/docs/learn/architecture)
+- [MCP Python SDK 문서](https://github.com/modelcontextprotocol/python-sdk)
