@@ -44,14 +44,6 @@ Claude Desktop의 설정 파일에 다음 내용을 추가합니다:
 
 </details>
 
-### 환경 변수 설정
-
-각 플랫폼의 토큰을 발급받아 설정해야 합니다:
-
-- **GitLab**: Personal Access Token 생성 (API 권한 필요)
-- **Confluence**: Atlassian OAuth Token 또는 Personal Access Token
-- **Figma**: Personal Access Token 생성
-- **Mattermost**: Personal Access Token 생성
 
 <details>
 <summary><strong>Cursor 설정</strong></summary>
@@ -86,6 +78,15 @@ Cursor에서 MCP 서버를 사용하려면 설정에서 MCP 서버를 등록해�
 자세한 설정 방법은 [Cursor MCP 문서](https://docs.cursor.com/context/mcp)를 참조하세요.
 
 </details>
+
+### 환경 변수 설정
+
+각 플랫폼의 토큰을 발급받아 설정해야 합니다:
+
+- **GitLab**: Personal Access Token 생성 (API 권한 필요)
+- **Confluence**: Atlassian OAuth Token 또는 Personal Access Token
+- **Figma**: Personal Access Token 생성
+- **Mattermost**: Personal Access Token 생성
 
 
 ## 프로젝트 개요
