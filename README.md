@@ -12,37 +12,6 @@
 
 ## MCP 설치 가이드
 
-<details>
-<summary><strong>Claude Desktop 설정</strong></summary>
-
-Claude Desktop의 설정 파일에 다음 내용을 추가합니다:
-
-**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`\
-**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-
-```json
-{
-  "mcpServers": {
-    "gabia-dev-mcp": {
-      "command": "java",
-      "args": [
-        "-jar",
-        "/path/to/gabia-dev-mcp-server-1.0.0.jar"
-      ],
-      "env": {
-        "GITLAB_API_URL": "https://gitlab.gabia.com/api/v4",
-        "GITLAB_TOKEN": "your_gitlab_token",
-        "CONFLUENCE_BASE_URL": "https://confluence.gabia.com",
-        "ATLASSIAN_OAUTH_ACCESS_TOKEN": "your_confluence_token",
-        "FIGMA_API_KEY": "your_figma_api_key",
-        "MATTERMOST_TOKEN": "your_mattermost_token"
-      }
-    }
-  }
-}
-```
-
-</details>
 
 
 <details>
@@ -76,6 +45,62 @@ Cursor에서 MCP 서버를 사용하려면 설정에서 MCP 서버를 등록해�
 ```
 
 자세한 설정 방법은 [Cursor MCP 문서](https://docs.cursor.com/context/mcp)를 참조하세요.
+
+</details>
+
+<details>
+<summary><strong>Codex CLI 설정</strong></summary>
+
+Codex CLI는 `~/.codex/config.toml` 파일의 `mcp_servers` 섹션을 통해 MCP 서버를 설정합니다. 포맷은 TOML이며 JSON과 다릅니다.
+
+- 중요: 최상위 키는 `mcp_servers` 입니다 (`mcpServers` 아님).
+- macOS 경로: `~/.codex/config.toml`
+
+```toml
+[mcp_servers.gabia-dev-mcp]
+command = "java"
+args = ["-jar", "/path/to/gabia-dev-mcp-server-1.0.0.jar"]
+
+[mcp_servers.gabia-dev-mcp.env]
+GITLAB_API_URL = "https://gitlab.gabia.com/api/v4"
+GITLAB_TOKEN = "your_gitlab_token"
+CONFLUENCE_BASE_URL = "https://confluence.gabia.com"
+ATLASSIAN_OAUTH_ACCESS_TOKEN = "your_confluence_token"
+FIGMA_API_KEY = "your_figma_api_key"
+MATTERMOST_TOKEN = "your_mattermost_token"
+```
+
+</details>
+
+<details>
+<summary><strong>Claude Desktop 설정</strong></summary>
+
+Claude Desktop의 설정 파일에 다음 내용을 추가합니다:
+
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`\
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "gabia-dev-mcp": {
+      "command": "java",
+      "args": [
+        "-jar",
+        "/path/to/gabia-dev-mcp-server-1.0.0.jar"
+      ],
+      "env": {
+        "GITLAB_API_URL": "https://gitlab.gabia.com/api/v4",
+        "GITLAB_TOKEN": "your_gitlab_token",
+        "CONFLUENCE_BASE_URL": "https://confluence.gabia.com",
+        "ATLASSIAN_OAUTH_ACCESS_TOKEN": "your_confluence_token",
+        "FIGMA_API_KEY": "your_figma_api_key",
+        "MATTERMOST_TOKEN": "your_mattermost_token"
+      }
+    }
+  }
+}
+```
 
 </details>
 

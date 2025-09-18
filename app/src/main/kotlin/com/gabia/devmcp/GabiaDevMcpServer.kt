@@ -36,12 +36,16 @@ suspend fun runMcpServer() {
 
     // GitLab MR 관련 도구들 등록
     server.addGitLabMergeRequestTools()
+
     // GitLab Issue 관련 도구들 등록
     server.addGitLabIssueTools()
+
     // Confluence 관련 도구들 등록
     server.addConfluenceTools()
+
     // Figma 관련 도구들 등록
     server.addFigmaTools()
+    
     // Mattermost 관련 도구들 등록
     server.addMattermostTools()
 
