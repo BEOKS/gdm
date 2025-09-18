@@ -4,6 +4,7 @@ import com.gabia.devmcp.gitlab.addGitLabMergeRequestTools
 import com.gabia.devmcp.gitlab.addGitLabIssueTools
 import com.gabia.devmcp.confluence.addConfluenceTools
 import com.gabia.devmcp.figma.addFigmaTools
+import com.gabia.devmcp.mattermost.addMattermostTools
 import io.modelcontextprotocol.kotlin.sdk.*
 import io.modelcontextprotocol.kotlin.sdk.server.*
 import kotlinx.coroutines.*
@@ -41,6 +42,8 @@ suspend fun runMcpServer() {
     server.addConfluenceTools()
     // Figma 관련 도구들 등록
     server.addFigmaTools()
+    // Mattermost 관련 도구들 등록
+    server.addMattermostTools()
 
     // 표준 입출력을 통한 전송 설정
     val transport = StdioServerTransport(

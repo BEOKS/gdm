@@ -18,8 +18,8 @@ import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
 /**
- * Ktor를 사용하는 Figma API 클라이언트. API Key (X-Figma-Token)와 OAuth Bearer 토큰을 지원합니다.
- * 환경 변수를 통해 인증 정보를 설정하세요:
+ * Figma API client using Ktor. Supports API Key (X-Figma-Token) and OAuth Bearer token.
+ * Configure credentials via environment variables:
  * - FIGMA_API_KEY
  * - FIGMA_OAUTH_TOKEN
  */
@@ -38,7 +38,7 @@ class FigmaApiClient {
     private val httpClient = HttpClient(CIO) {
         engine {
             https {
-                // 환경 변수가 설정된 경우 선택적으로 TLS를 완화하거나 사용자 정의
+                // Optionally relax or customize TLS if env vars are set
                 buildTrustManager()?.let { this.trustManager = it }
             }
         }
@@ -58,9 +58,8 @@ class FigmaApiClient {
         else -> null to null
     }
 
-    // 후.. 가비아 CA 인증서는 도대체 언제 최신화 될까...
     private fun buildTrustManager(): X509TrustManager? {
-        // 1) 제공된 경우 명시적인 기업 CA 번들을 우선 사용
+        // 1) Prefer explicit corporate CA bundle if provided
         val pemPath = System.getenv("FIGMA_CA_CERT_PEM")?.takeIf { it.isNotBlank() }
         if (pemPath != null) {
             val path = Path.of(pemPath)
@@ -87,8 +86,8 @@ class FigmaApiClient {
             }
         }
 
-        // 2) 명시적으로 비활성화되지 않는 한 기본적으로 보안을 완화
-        // 대신 JVM 기본 신뢰 저장소를 사용하려면 FIGMA_SSL_INSECURE=false로 설정하세요.
+        // 2) Default to insecure unless explicitly disabled
+        // Set FIGMA_SSL_INSECURE=false to use JVM default trust store instead.
         val insecureEnv = System.getenv("FIGMA_SSL_INSECURE")?.lowercase()
         if (insecureEnv == null || insecureEnv == "true") {
             return object : X509TrustManager {
@@ -98,7 +97,7 @@ class FigmaApiClient {
             }
         }
 
-        // 3) 명시적으로 보안: JVM 기본 신뢰 저장소로 폴백
+        // 3) Explicitly secure: fall back to JVM default trust store
         return null
     }
 

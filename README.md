@@ -4,6 +4,90 @@
 
 [Demo](https://gitlab.gabia.com/gm2302028/gabia-dev-mcp/-/issues/1)
 
+## 사용법
+
+1. [JDK 21](https://www.oracle.com/kr/java/technologies/downloads/#java21) 을 설치합니다.
+2. Cursor, Claude Desktop 과 같은 클라이언트를 준비합니다.
+3. [최신 Release](https://gitlab.gabia.com/gm2302028/gabia-dev-mcp/-/releases)에서 `gabia-dev-mcp-server.jar`를 다운로드합니다.
+
+## MCP 설치 가이드
+
+<details>
+<summary><strong>Claude Desktop 설정</strong></summary>
+
+Claude Desktop의 설정 파일에 다음 내용을 추가합니다:
+
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`\
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "gabia-dev-mcp": {
+      "command": "java",
+      "args": [
+        "-jar",
+        "/path/to/gabia-dev-mcp-server-1.0.0.jar"
+      ],
+      "env": {
+        "GITLAB_API_URL": "https://gitlab.gabia.com/api/v4",
+        "GITLAB_TOKEN": "your_gitlab_token",
+        "CONFLUENCE_BASE_URL": "https://confluence.gabia.com",
+        "ATLASSIAN_OAUTH_ACCESS_TOKEN": "your_confluence_token",
+        "FIGMA_API_KEY": "your_figma_api_key",
+        "MATTERMOST_TOKEN": "your_mattermost_token"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+### 환경 변수 설정
+
+각 플랫폼의 토큰을 발급받아 설정해야 합니다:
+
+- **GitLab**: Personal Access Token 생성 (API 권한 필요)
+- **Confluence**: Atlassian OAuth Token 또는 Personal Access Token
+- **Figma**: Personal Access Token 생성
+- **Mattermost**: Personal Access Token 생성
+
+<details>
+<summary><strong>Cursor 설정</strong></summary>
+
+Cursor에서 MCP 서버를 사용하려면 설정에서 MCP 서버를 등록해야 합니다.
+
+### 설정 방법
+
+1. Cursor 설정을 열고 MCP 서버 섹션으로 이동합니다.
+2. 새로운 MCP 서버를 추가합니다.
+3. 다음 설정을 입력합니다:
+
+```json
+{
+  "name": "gabia-dev-mcp",
+  "command": "java",
+  "args": [
+    "-jar",
+    "/path/to/gabia-dev-mcp-server-1.0.0.jar"
+  ],
+  "env": {
+    "GITLAB_API_URL": "https://gitlab.gabia.com/api/v4",
+    "GITLAB_TOKEN": "your_gitlab_token",
+    "CONFLUENCE_BASE_URL": "https://confluence.gabia.com",
+    "ATLASSIAN_OAUTH_ACCESS_TOKEN": "your_confluence_token",
+    "FIGMA_API_KEY": "your_figma_api_key",
+    "MATTERMOST_TOKEN": "your_mattermost_token"
+  }
+}
+```
+
+자세한 설정 방법은 [Cursor MCP 문서](https://docs.cursor.com/context/mcp)를 참조하세요.
+
+</details>
+
+
 ## 프로젝트 개요
 
 개발자의 일상적인 업무를 생각해보면, 서비스 페이지부터 GitLab, Figma, Confluence, Mattermost, Sentry, Kibana, Rancher, Jira, IDE까지 정말 많은 플랫폼을 오가며 작업합니다.
