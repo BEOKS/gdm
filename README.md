@@ -39,7 +39,12 @@ Cursor에서 MCP 서버를 사용하려면 설정에서 MCP 서버를 등록해�
     "CONFLUENCE_BASE_URL": "https://confluence.gabia.com",
     "ATLASSIAN_OAUTH_ACCESS_TOKEN": "your_confluence_token",
     "FIGMA_API_KEY": "your_figma_api_key",
-    "MATTERMOST_TOKEN": "your_mattermost_token"
+    "MATTERMOST_TOKEN": "your_mattermost_token",
+    "ORACLE_HOST": "your_oracle_host",
+    "ORACLE_PORT": "1521",
+    "ORACLE_SID": "DEVGABIA",
+    "ORACLE_USERNAME": "your_username",
+    "ORACLE_PASSWORD": "your_password"
   }
 }
 ```
@@ -68,6 +73,11 @@ CONFLUENCE_BASE_URL = "https://confluence.gabia.com"
 ATLASSIAN_OAUTH_ACCESS_TOKEN = "your_confluence_token"
 FIGMA_API_KEY = "your_figma_api_key"
 MATTERMOST_TOKEN = "your_mattermost_token"
+ORACLE_HOST = "your_oracle_host"
+ORACLE_PORT = "1521"
+ORACLE_SID = "DEVGABIA"
+ORACLE_USERNAME = "your_username"
+ORACLE_PASSWORD = "your_password"
 ```
 
 </details>
@@ -95,7 +105,12 @@ Claude Desktop의 설정 파일에 다음 내용을 추가합니다:
         "CONFLUENCE_BASE_URL": "https://confluence.gabia.com",
         "ATLASSIAN_OAUTH_ACCESS_TOKEN": "your_confluence_token",
         "FIGMA_API_KEY": "your_figma_api_key",
-        "MATTERMOST_TOKEN": "your_mattermost_token"
+        "MATTERMOST_TOKEN": "your_mattermost_token",
+        "ORACLE_HOST": "your_oracle_host",
+        "ORACLE_PORT": "1521",
+        "ORACLE_SID": "DEVGABIA",
+        "ORACLE_USERNAME": "your_username",
+        "ORACLE_PASSWORD": "your_password"
       }
     }
   }
@@ -112,6 +127,7 @@ Claude Desktop의 설정 파일에 다음 내용을 추가합니다:
 - **Confluence**: Atlassian OAuth Token 또는 Personal Access Token
 - **Figma**: Personal Access Token 생성
 - **Mattermost**: Personal Access Token 생성
+- **Oracle**: 데이터베이스 연결 정보 (호스트, 포트, SID, 사용자명, 비밀번호)
 
 
 ## 프로젝트 개요
@@ -202,6 +218,8 @@ graph TD
 | **Confluence** | `confluence_add_comment` | 댓글 추가 | 페이지 ID에 댓글을 추가합니다 |
 | **Figma** | `get_figma_data` | Figma 파일 데이터 조회 | 레이아웃, 콘텐츠, 시각적 요소, 컴포넌트 정보를 포함한 포괄적인 Figma 파일 데이터를 조회합니다 |
 | **Figma** | `download_figma_images` | Figma 이미지 다운로드 | 이미지 또는 아이콘 노드의 ID를 기반으로 Figma 파일에서 사용된 SVG 및 PNG 이미지를 다운로드합니다 |
+| **Oracle** | `oracle_execute_select` | SELECT 쿼리 실행 | Oracle 데이터베이스에서 SELECT 쿼리를 실행하고 결과를 반환합니다 (세미콜론 자동 제거 지원) |
+| **Oracle** | `oracle_test_connection` | 연결 테스트 | Oracle 데이터베이스 연결 상태를 테스트합니다 |
 | **Mattermost** | - | 알림 및 커뮤니케이션 | - |
 | **Sentry** | - | 에러 모니터링 및 분석 | - |
 | **Kibana** | - | 로그 분석 | - |

@@ -32,6 +32,9 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.kotlinx.io)
+    
+    // Oracle JDBC driver for Oracle 19c
+    implementation(libs.oracle.jdbc)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
