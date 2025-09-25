@@ -44,7 +44,8 @@ Cursor에서 MCP 서버를 사용하려면 설정에서 MCP 서버를 등록해�
     "ORACLE_PORT": "1521",
     "ORACLE_SID": "DEVGABIA",
     "ORACLE_USERNAME": "your_username",
-    "ORACLE_PASSWORD": "your_password"
+    "ORACLE_PASSWORD": "your_password",
+    "MEMORY_FILE_PATH": "memory.json"
   }
 }
 ```
@@ -78,6 +79,7 @@ ORACLE_PORT = "1521"
 ORACLE_SID = "DEVGABIA"
 ORACLE_USERNAME = "your_username"
 ORACLE_PASSWORD = "your_password"
+MEMORY_FILE_PATH = "memory.json"
 ```
 
 </details>
@@ -110,7 +112,8 @@ Claude Desktop의 설정 파일에 다음 내용을 추가합니다:
         "ORACLE_PORT": "1521",
         "ORACLE_SID": "DEVGABIA",
         "ORACLE_USERNAME": "your_username",
-        "ORACLE_PASSWORD": "your_password"
+        "ORACLE_PASSWORD": "your_password",
+        "MEMORY_FILE_PATH": "memory.json"
       }
     }
   }
@@ -218,6 +221,79 @@ graph TD
 | **Confluence** | `confluence_add_comment` | 댓글 추가 | 페이지 ID에 댓글을 추가합니다 |
 | **Figma** | `get_figma_data` | Figma 파일 데이터 조회 | 레이아웃, 콘텐츠, 시각적 요소, 컴포넌트 정보를 포함한 포괄적인 Figma 파일 데이터를 조회합니다 |
 | **Figma** | `download_figma_images` | Figma 이미지 다운로드 | 이미지 또는 아이콘 노드의 ID를 기반으로 Figma 파일에서 사용된 SVG 및 PNG 이미지를 다운로드합니다 |
+| **Memory** | `create_entities` | 엔터티 생성 | 그래프에 새 엔터티를 여러 개 생성합니다 |
+| **Memory** | `create_relations` | 관계 생성 | 엔터티 간 관계를 생성합니다 (능동태로 기술) |
+| **Memory** | `add_observations` | 관찰 추가 | 기존 엔터티에 관찰 텍스트를 추가합니다 |
+| **Memory** | `delete_entities` | 엔터티 삭제 | 엔터티 및 관련 관계를 삭제합니다 |
+| **Memory** | `delete_observations` | 관찰 삭제 | 특정 엔터티의 일부 관찰을 삭제합니다 |
+| **Memory** | `delete_relations` | 관계 삭제 | 관계를 다건 삭제합니다 |
+| **Memory** | `read_graph` | 그래프 조회 | 전체 지식 그래프를 조회합니다 |
+| **Memory** | `search_nodes` | 노드 검색 | 이름/타입/관찰 내용으로 노드를 검색합니다 |
+| **Memory** | `open_nodes` | 노드 열기 | 이름 목록으로 노드/관계를 조회합니다 |
+
+## Memory 기능 (성장형 LLM 지식 그래프)
+
+업무 중 습득한 암묵지나 반복적으로 참고할 노하우를 LLM이 스스로 저장/갱신해 다음 작업에서 더 잘 수행하도록 돕는 기능입니다. 라인 기반 JSONL(`memory.json`)로 간단하고 투명하게 저장하며, 엔터티-관계-관찰로 구성된 경량 지식 그래프를 제공합니다.
+
+- 저장 위치: `MEMORY_FILE_PATH` 환경 변수로 지정. 절대경로 또는 파일명만 지정 가능. 파일명만 지정하면 JAR 실행 경로 기준으로 저장됩니다. 기본값은 `memory.json`.
+- 포맷: 각 줄에 하나의 JSON 객체가 기록됩니다. `type`이 `entity` 또는 `relation`.
+
+### 사용 예시
+
+1) 엔터티 생성
+
+```
+tool: create_entities
+args: {
+  "entities": [
+    { "name": "gabia-logging-guide", "entityType": "doc", "observations": [
+      "Sentry 이슈 링크는 MR 본문에 첨부",
+      "Kibana 쿼리는 팀 공통 DSL 사용"
+    ]}
+  ]
+}
+```
+
+2) 관계 생성 (능동태)
+
+```
+tool: create_relations
+args: {
+  "relations": [
+    { "from": "gabia-logging-guide", "to": "Sentry", "relationType": "references" }
+  ]
+}
+```
+
+3) 관찰 추가
+
+```
+tool: add_observations
+args: {
+  "observations": [
+    { "entityName": "gabia-logging-guide", "contents": [
+      "Error budget은 월별 99.9% 초과 시 알림"
+    ]}
+  ]
+}
+```
+
+4) 검색 및 열람
+
+```
+tool: search_nodes
+args: { "query": "Sentry" }
+
+tool: open_nodes
+args: { "names": ["gabia-logging-guide"] }
+```
+
+### 설계 메모
+
+- 안정성: 파일 접근은 뮤텍스로 직렬화하여 동시성 안전성을 확보했습니다.
+- 중복 방지: 동일 이름의 엔터티, 동일 삼중항(from,to,relationType) 관계는 중복 기록하지 않습니다. 관찰도 중복을 걸러 추가합니다.
+- 이식성: MCP Tool 스키마는 단순 JSON으로 설계해 Claude, Cursor, Codex CLI 등에서 동일하게 사용 가능합니다.
+- 투명성: 파일은 사람이 읽고 편집 가능한 형태이므로, 필요 시 Git으로 버전 관리할 수 있습니다.
 | **Oracle** | `oracle_execute_select` | SELECT 쿼리 실행 | Oracle 데이터베이스에서 SELECT 쿼리를 실행하고 결과를 반환합니다 (세미콜론 자동 제거 지원) |
 | **Oracle** | `oracle_test_connection` | 연결 테스트 | Oracle 데이터베이스 연결 상태를 테스트합니다 |
 | **Mattermost** | - | 알림 및 커뮤니케이션 | - |

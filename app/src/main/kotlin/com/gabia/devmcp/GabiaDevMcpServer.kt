@@ -6,6 +6,7 @@ import com.gabia.devmcp.confluence.addConfluenceTools
 import com.gabia.devmcp.figma.addFigmaTools
 import com.gabia.devmcp.mattermost.addMattermostTools
 import com.gabia.devmcp.oracle.addOracleTools
+import com.gabia.devmcp.memory.addMemoryTools
 import io.modelcontextprotocol.kotlin.sdk.*
 import io.modelcontextprotocol.kotlin.sdk.server.*
 import kotlinx.coroutines.*
@@ -52,6 +53,9 @@ suspend fun runMcpServer() {
     
     // Oracle 관련 도구들 등록
     server.addOracleTools()
+
+    // Memory(지식 그래프) 관련 도구들 등록
+    server.addMemoryTools()
 
     // 표준 입출력을 통한 전송 설정
     val transport = StdioServerTransport(
