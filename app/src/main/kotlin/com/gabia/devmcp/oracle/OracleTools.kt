@@ -8,6 +8,17 @@ import kotlinx.serialization.json.*
  * 오라클 데이터베이스 관련 MCP 도구들을 추가합니다.
  */
 fun Server.addOracleTools() {
+    // 필수 환경 변수 체크
+    val host = System.getenv("ORACLE_HOST")
+    val username = System.getenv("ORACLE_USERNAME")
+    val password = System.getenv("ORACLE_PASSWORD")
+    
+    if (host.isNullOrBlank() || username.isNullOrBlank() || password.isNullOrBlank()) {
+        println("Oracle 도구를 등록하지 않습니다: 필수 환경 변수가 설정되지 않았습니다.")
+        println("   필요한 환경 변수: ORACLE_HOST, ORACLE_USERNAME, ORACLE_PASSWORD")
+        return
+    }
+    
     addTool(
         name = "oracle_execute_select",
         description = "오라클 데이터베이스에서 SELECT 쿼리를 실행하고 결과를 반환합니다.",
@@ -91,6 +102,8 @@ fun Server.addOracleTools() {
             )
         }
     }
+    
+    println("Oracle 도구가 등록되었습니다.")
 }
 
 /**

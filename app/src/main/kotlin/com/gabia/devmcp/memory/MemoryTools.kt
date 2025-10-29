@@ -203,6 +203,7 @@ class MemoryTools(private val manager: KnowledgeGraphManager = KnowledgeGraphMan
         addReadGraph(server)
         addSearchNodes(server)
         addOpenNodes(server)
+        println("Memory (지식 그래프) 도구가 등록되었습니다.")
     }
 
     private fun addCreateEntities(server: Server) {

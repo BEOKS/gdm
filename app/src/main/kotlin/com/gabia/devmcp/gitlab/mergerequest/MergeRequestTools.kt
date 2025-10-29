@@ -16,11 +16,21 @@ class MergeRequestTools {
      * GitLab MR 관련 MCP 도구들을 서버에 등록하는 함수
      */
     fun addToServer(server: Server) {
+        // 필수 환경 변수 체크
+        val token = System.getenv("GITLAB_TOKEN")
+        
+        if (token.isNullOrBlank()) {
+            println("GitLab MR 도구를 등록하지 않습니다: 필수 환경 변수가 설정되지 않았습니다.")
+            println("   필요한 환경 변수: GITLAB_TOKEN")
+            return
+        }
+        
         addGetMergeRequestTool(server)
         addGetMergeRequestDiffsTool(server)
         addMrDiscussionsTool(server)
         addCreateMergeRequestTool(server)
         addListMergeRequestsTool(server)
+        println("GitLab MR 도구가 등록되었습니다.")
     }
     
     /**
