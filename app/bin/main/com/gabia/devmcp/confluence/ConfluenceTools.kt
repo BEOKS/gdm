@@ -11,12 +11,28 @@ class ConfluenceTools {
     private val apiClient = ConfluenceApiClient()
 
     fun addToServer(server: Server) {
+        // 필수 환경 변수 체크
+        val baseUrl = System.getenv("CONFLUENCE_BASE_URL")
+        val hasAuth = !System.getenv("ATLASSIAN_OAUTH_ACCESS_TOKEN").isNullOrBlank() ||
+                (!System.getenv("CONFLUENCE_USERNAME").isNullOrBlank() && !System.getenv("CONFLUENCE_API_TOKEN").isNullOrBlank()) ||
+                (!System.getenv("ATLASSIAN_EMAIL").isNullOrBlank() && !System.getenv("ATLASSIAN_API_TOKEN").isNullOrBlank())
+        
+        if (baseUrl.isNullOrBlank() || !hasAuth) {
+            //println("Confluence 도구를 등록하지 않습니다: 필수 환경 변수가 설정되지 않았습니다.")
+            //println("   필요한 환경 변수:")
+            //println("   - CONFLUENCE_BASE_URL (필수)")
+            //println("   - ATLASSIAN_OAUTH_ACCESS_TOKEN 또는")
+            //println("   - (CONFLUENCE_USERNAME 또는 ATLASSIAN_EMAIL) + (CONFLUENCE_API_TOKEN 또는 ATLASSIAN_API_TOKEN)")
+            return
+        }
+        
         addConfluenceSearchTool(server)
         addConfluenceGetPageTool(server)
         addConfluenceCreatePageTool(server)
         addConfluenceUpdatePageTool(server)
         addConfluenceDeletePageTool(server)
         addConfluenceAddCommentTool(server)
+        //println("Confluence 도구가 등록되었습니다.")
     }
 
     private fun addConfluenceSearchTool(server: Server) {

@@ -20,8 +20,8 @@ class MattermostTools {
         val token = System.getenv("MATTERMOST_TOKEN")
         
         if (token.isNullOrBlank()) {
-            println("Mattermost 도구를 등록하지 않습니다: 필수 환경 변수가 설정되지 않았습니다.")
-            println("   필요한 환경 변수: MATTERMOST_TOKEN")
+            //println("Mattermost 도구를 등록하지 않습니다: 필수 환경 변수가 설정되지 않았습니다.")
+            //println("   필요한 환경 변수: MATTERMOST_TOKEN")
             return
         }
         
@@ -30,7 +30,7 @@ class MattermostTools {
         addGetTeamsTool(server)
         addGetChannelsTool(server)
         addGetUsersTool(server)
-        println("Mattermost 도구가 등록되었습니다.")
+        //println("Mattermost 도구가 등록되었습니다.")
     }
 
     /**

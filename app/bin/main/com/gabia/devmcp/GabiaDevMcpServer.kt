@@ -6,6 +6,7 @@ import com.gabia.devmcp.confluence.addConfluenceTools
 import com.gabia.devmcp.figma.addFigmaTools
 import com.gabia.devmcp.mattermost.addMattermostTools
 import com.gabia.devmcp.oracle.addOracleTools
+import com.gabia.devmcp.memory.addMemoryTools
 import io.modelcontextprotocol.kotlin.sdk.*
 import io.modelcontextprotocol.kotlin.sdk.server.*
 import kotlinx.coroutines.*
@@ -53,6 +54,9 @@ suspend fun runMcpServer() {
     // Oracle 관련 도구들 등록
     server.addOracleTools()
 
+    // Memory(지식 그래프) 관련 도구들 등록
+    server.addMemoryTools()
+
     // 표준 입출력을 통한 전송 설정
     val transport = StdioServerTransport(
         inputStream = System.`in`.asSource().buffered(),
@@ -71,10 +75,10 @@ suspend fun runMcpServer() {
 }
 
 fun main() = runBlocking {
-    println("Gabia Dev MCP Server 시작 중...")
-    println("- GitLab MR 관리 API: GitLab")
-    println("- Confluence 검색/페이지 API: Atlassian Confluence")
-    println("- Figma 파일/이미지 API: Figma")
-    println("- Oracle 데이터베이스 쿼리 실행: Oracle 19c")
+    //println("Gabia Dev MCP Server 시작 중...")
+    //println("- GitLab MR 관리 API: GitLab")
+    //println("- Confluence 검색/페이지 API: Atlassian Confluence")
+    //println("- Figma 파일/이미지 API: Figma")
+    //println("- Oracle 데이터베이스 쿼리 실행: Oracle 19c")
     runMcpServer()
 }

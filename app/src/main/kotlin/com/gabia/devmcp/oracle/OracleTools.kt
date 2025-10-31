@@ -14,8 +14,8 @@ fun Server.addOracleTools() {
     val password = System.getenv("ORACLE_PASSWORD")
     
     if (host.isNullOrBlank() || username.isNullOrBlank() || password.isNullOrBlank()) {
-        println("Oracle 도구를 등록하지 않습니다: 필수 환경 변수가 설정되지 않았습니다.")
-        println("   필요한 환경 변수: ORACLE_HOST, ORACLE_USERNAME, ORACLE_PASSWORD")
+        // //println("Oracle 도구를 등록하지 않습니다: 필수 환경 변수가 설정되지 않았습니다.")
+        // //println("   필요한 환경 변수: ORACLE_HOST, ORACLE_USERNAME, ORACLE_PASSWORD")
         return
     }
     
@@ -102,8 +102,8 @@ fun Server.addOracleTools() {
             )
         }
     }
-    
-    println("Oracle 도구가 등록되었습니다.")
+
+    // //println("Oracle 도구가 등록되었습니다.")
 }
 
 /**

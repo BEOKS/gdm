@@ -75,10 +75,10 @@ suspend fun runMcpServer() {
 }
 
 fun main() = runBlocking {
-    println("Gabia Dev MCP Server 시작 중...")
-    println("- GitLab MR 관리 API: GitLab")
-    println("- Confluence 검색/페이지 API: Atlassian Confluence")
-    println("- Figma 파일/이미지 API: Figma")
-    println("- Oracle 데이터베이스 쿼리 실행: Oracle 19c")
+    // //println("Gabia Dev MCP Server 시작 중...")
+    // //println("- GitLab MR 관리 API: GitLab")
+    // //println("- Confluence 검색/페이지 API: Atlassian Confluence")
+    // //println("- Figma 파일/이미지 API: Figma")
+    // //println("- Oracle 데이터베이스 쿼리 실행: Oracle 19c")
     runMcpServer()
 }

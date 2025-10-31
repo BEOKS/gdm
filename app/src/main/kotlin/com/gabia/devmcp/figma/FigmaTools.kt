@@ -16,16 +16,16 @@ class FigmaTools {
         // 필수 환경 변수 체크
         val hasAuth = !System.getenv("FIGMA_API_KEY").isNullOrBlank() ||
                 !System.getenv("FIGMA_OAUTH_TOKEN").isNullOrBlank()
-        
+
         if (!hasAuth) {
-            println("Figma 도구를 등록하지 않습니다: 필수 환경 변수가 설정되지 않았습니다.")
-            println("   필요한 환경 변수: FIGMA_API_KEY 또는 FIGMA_OAUTH_TOKEN")
+            // //println("Figma 도구를 등록하지 않습니다: 필수 환경 변수가 설정되지 않았습니다.")
+            // //println("   필요한 환경 변수: FIGMA_API_KEY 또는 FIGMA_OAUTH_TOKEN")
             return
         }
-        
+
         addGetFigmaDataTool(server)
         addDownloadFigmaImagesTool(server)
-        println("Figma 도구가 등록되었습니다.")
+        // //println("Figma 도구가 등록되었습니다.")
     }
 
     private fun addGetFigmaDataTool(server: Server) {
